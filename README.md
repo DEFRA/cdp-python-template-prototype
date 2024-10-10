@@ -1,62 +1,60 @@
 # cdp-python-template-prototype
 
-Core delivery platform Node.js Backend Template.
+Core Delivery Platform Python Backend Template.
 
-- [Requirements](#requirements)
-  - [Node.js](#nodejs)
-- [Local development](#local-development)
-  - [Setup](#setup)
-  - [Development](#development)
-  - [Testing](#testing)
-  - [Production](#production)
-  - [Npm scripts](#npm-scripts)
-  - [Update dependencies](#update-dependencies)
-  - [Formatting](#formatting)
-    - [Windows prettier issue](#windows-prettier-issue)
-- [API endpoints](#api-endpoints)
-- [Calling API endpoints](#calling-api-endpoints)
-  - [Postman](#postman)
-- [Development helpers](#development-helpers)
-  - [MongoDB Locks](#mongodb-locks)
-- [Docker](#docker)
-  - [Development image](#development-image)
-  - [Production image](#production-image)
-  - [Docker Compose](#docker-compose)
-  - [Dependabot](#dependabot)
-  - [SonarCloud](#sonarcloud)
-- [Licence](#licence)
-  - [About the licence](#about-the-licence)
+This is work-in-progress. See [To Do List](./TODO.md)
+
+- [cdp-python-template-prototype](#cdp-python-template-prototype)
+  - [Requirements](#requirements)
+    - [Docker](#docker)
+    - [Python Dependencies](#python-dependencies)
+  - [Local development](#local-development)
+    - [Setup](#setup)
+    - [Development](#development)
+    - [Testing](#testing)
+    - [Production](#production)
+  - [API endpoints](#api-endpoints)
+    - [Dependabot](#dependabot)
+    - [SonarCloud](#sonarcloud)
+  - [Licence](#licence)
+    - [About the licence](#about-the-licence)
 
 ## Requirements
 
-### Node.js
+### Docker
 
-Please install [Node.js](http://nodejs.org/) `>= v18` and [npm](https://nodejs.org/) `>= v9`. You will find it
-easier to use the Node Version Manager [nvm](https://github.com/creationix/nvm)
+This repository uses Docker throughout its lifecycle i.e. both for local development and the environments
 
-To use the correct version of Node.js for this application, via nvm:
+This means that local installation of python and configuration of a python virtual environment is not required. Also environment variables are managed consistently throughout the lifecycle
 
-```bash
-cd cdp-python-template-prototype
-nvm use
-```
+See the `Dockerfile` and `compose.yml` for details
+
+### Python Dependencies
+
+This opinionated template uses the [`Fast API`](https://fastapi.tiangolo.com/) Python API framework.
+
+This and all other python libraries must reside in `requirements.txt`
 
 ## Local development
 
+Local development is done using Docker compose.  This template contains a local environment with:
+
+- Localstack
+- MongoDB
+- This service
+
 ### Setup
 
-Install application dependencies:
+Environment variables: `compose/aws.env``
 
-```bash
-npm install
-```
+Secrets: `compose/secrets.env`. You need to create this, as it's excluded from version control.
 
 ### Development
 
 To run the application in `development` mode run:
 
 ```bash
-npm run dev
+docker compose watch
 ```
 
 ### Testing
@@ -64,7 +62,7 @@ npm run dev
 To test the application run:
 
 ```bash
-npm run test
+TBC
 ```
 
 ### Production
@@ -72,146 +70,21 @@ npm run test
 To mimic the application running in `production` mode locally run:
 
 ```bash
-npm start
+docker compose up --build -d
 ```
 
-### Npm scripts
-
-All available Npm scripts can be seen in [package.json](./package.json)
-To view them in your command line run:
+Stop the application with
 
 ```bash
-npm run
-```
-
-### Update dependencies
-
-To update dependencies use [npm-check-updates](https://github.com/raineorshine/npm-check-updates):
-
-> The following script is a good start. Check out all the options on
-> the [npm-check-updates](https://github.com/raineorshine/npm-check-updates)
-
-```bash
-ncu --interactive --format group
-```
-
-### Formatting
-
-#### Windows prettier issue
-
-If you are having issues with formatting of line breaks on Windows update your global git config by running:
-
-```bash
-git config --global core.autocrlf false
+docker compose down
 ```
 
 ## API endpoints
 
 | Endpoint             | Description                    |
 | :------------------- | :----------------------------- |
-| `GET: /health`       | Health                         |
-| `GET: /example    `  | Example API (remove as needed) |
-| `GET: /example/<id>` | Example API (remove as needed) |
-
-## Calling API endpoints
-
-### Postman
-
-A [Postman](https://www.postman.com/) collection and environment are available for making calls to the
-cdp-python-template-prototype API.
-Simply import the collection and environment into Postman.
-
-- [CDP Node Backend Template Postman Collection](postman/cdp-python-template-prototype.postman_collection.json)
-- [CDP Node Backend Template Postman Environment](postman/cdp-python-template-prototype.postman_environment.json)
-
-## Development helpers
-
-### MongoDB Locks
-
-If you require a write lock for Mongo you can acquire it via `server.locker` or `request.locker`:
-
-```javascript
-async function doStuff(server) {
-  const lock = await server.locker.lock('unique-resource-name')
-
-  if (!lock) {
-    // Lock unavailable
-    return
-  }
-
-  try {
-    // do stuff
-  } finally {
-    await lock.free()
-  }
-}
-```
-
-Keep it small and atomic.
-
-You may use **using** for the lock resource management.
-Note test coverage reports do not like that syntax.
-
-```javascript
-async function doStuff(server) {
-  await using lock = await server.locker.lock('unique-resource-name')
-
-  if (!lock) {
-    // Lock unavailable
-    return
-  }
-
-  // do stuff
-
-  // lock automatically released
-}
-```
-
-Helper methods are also available in `/src/helpers/mongo-lock.js`.
-
-## Docker
-
-### Development image
-
-Build:
-
-```bash
-docker build --target development --no-cache --tag cdp-python-template-prototype:development .
-```
-
-Run:
-
-```bash
-docker run -e PORT=3001 -p 3001:3001 cdp-python-template-prototype:development
-```
-
-### Production image
-
-Build:
-
-```bash
-docker build --no-cache --tag cdp-python-template-prototype .
-```
-
-Run:
-
-```bash
-docker run -e PORT=3001 -p 3001:3001 cdp-python-template-prototype
-```
-
-### Docker Compose
-
-A local environment with:
-
-- Localstack for AWS services (S3, SQS)
-- Redis
-- MongoDB
-- This service.
-- A commented out frontend example.
-
-```bash
-docker compose up --build -d
-```
+| `GET: /docs`         | Automatic API Swagger docs     |
+| `GET: /health`       | Health (no not remove)         |
 
 ### Dependabot
 
