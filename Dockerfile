@@ -44,4 +44,4 @@ COPY . .
 EXPOSE 8085
 
 # Run the application.
-CMD ["uvicorn", "app:app", "--host=0.0.0.0", "--port=8085"]
+CMD ["uvicorn", "app:app", "--host=0.0.0.0", "--port=8085", "--log-config", "logging.yaml", "--no-access-log"]

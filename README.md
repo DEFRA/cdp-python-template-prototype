@@ -84,7 +84,7 @@ docker compose down
 | Endpoint             | Description                    |
 | :------------------- | :----------------------------- |
 | `GET: /docs`         | Automatic API Swagger docs     |
-| `GET: /health`       | Health (no not remove)         |
+| `GET: /`             | Simple example                 |
 
 ### Dependabot
 
