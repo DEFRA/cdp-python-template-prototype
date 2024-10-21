@@ -1,6 +1,7 @@
 from os import environ
 from logging import getLogger
 from fastapi import FastAPI
+from metrics import counter
 
 logger = getLogger(__name__)
 
@@ -11,6 +12,8 @@ async def root():
     region = environ.get("AWS_REGION")
 
     logger.info(f"Region: {region}")
+
+    counter("Root", 1)
 
     return {"region": region}
 
