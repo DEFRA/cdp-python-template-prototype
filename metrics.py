@@ -9,8 +9,12 @@ def metrics_enabled():
     value = environ.get("AWS_EMF_ENVIRONMENT_OVERRIDE")
     return value != "local"
 
+@metric_scope
+def put_metric(metric_name, value, unit):
+    logger.info(f"Counter metric: {metric_name} - {value}")
+    metrics.put_metric(metric_name, value, unit, StorageResolution.STANDARD)
+
 def counter(metric_name, value):
     if metrics_enabled():
-        logger.info(f"Counter metric: {metric_name} - {value}")
-        metrics = metric_scope.metrics
-        metrics.put_metric(metric_name, value, "Count", StorageResolution.STANDARD)
+        put_metric(metric_name, value, "Count")
+
