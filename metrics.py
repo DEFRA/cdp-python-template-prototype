@@ -12,5 +12,5 @@ def metrics_enabled():
 def counter(metric_name, value):
     if metrics_enabled():
         logger.info(f"Counter metric: {metric_name} - {value}")
-        metrics = metric_scope.metrics()
+        metrics = metric_scope.metrics
         metrics.put_metric(metric_name, value, "Count", StorageResolution.STANDARD)
