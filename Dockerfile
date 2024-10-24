@@ -12,6 +12,10 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
+# Add curl to template.
+# CDP PLATFORM HEALTHCHECK REQUIREMENT
+RUN apt-get update && apt-get install curl -y
+
 WORKDIR /app
 
 # Create a non-privileged user that the app will run under.
