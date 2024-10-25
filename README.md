@@ -14,6 +14,8 @@ This is work-in-progress. See [To Do List](./TODO.md)
     - [Testing](#testing)
     - [Production](#production)
   - [API endpoints](#api-endpoints)
+  - [Custom Cloudwatch Metrics](#custom-cloudwatch-metrics)
+  - [Pipelines](#pipelines)
     - [Dependabot](#dependabot)
     - [SonarCloud](#sonarcloud)
   - [Licence](#licence)
@@ -85,6 +87,14 @@ docker compose down
 | :------------------- | :----------------------------- |
 | `GET: /docs`         | Automatic API Swagger docs     |
 | `GET: /`             | Simple example                 |
+
+## Custom Cloudwatch Metrics
+
+Uses the [aws embedded metrics library](https://github.com/awslabs/aws-embedded-metrics-python). An example can be found in `metrics.py`
+
+In order to make this library work in the environments, the environment variable `AWS_EMF_ENVIRONMENT=local` is set in the app config. This tells the library to use the local cloudwatch agent that has been configured in CDP, and uses the environment variables set up in CDP `AWS_EMF_AGENT_ENDPOINT`, `AWS_EMF_LOG_GROUP_NAME`, `AWS_EMF_LOG_STREAM_NAME`, `AWS_EMF_NAMESPACE`, `AWS_EMF_SERVICE_NAME`
+
+## Pipelines
 
 ### Dependabot
 

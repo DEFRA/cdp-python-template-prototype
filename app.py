@@ -10,13 +10,9 @@ logger = getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info(f"environment: {Confg.environment}")
-    logger.info(f"agent_endpoint: {Confg.agent_endpoint}")
-    logger.info(f"service_name: {Confg.service_name}")
-    logger.info(f"namespace: {Confg.namespace}")
-    logger.info(f"log_group_name: {Confg.log_group_name}")
-    logger.info(f"log_stream_name: {Confg.log_stream_name}")
-    logger.info(f"ec2_metadata_endpoint: {Confg.ec2_metadata_endpoint}")
+    logger.info(f"EMF Environment: {Confg.environment}")
+    logger.info(f"EMF Agent Endpoint: {Confg.agent_endpoint}")
+    logger.info(f"EMF Service Name: {Confg.service_name}")
     yield
 
 app = FastAPI(lifespan=lifespan)

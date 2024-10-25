@@ -1,25 +1,22 @@
 from aws_embedded_metrics import metric_scope
 from aws_embedded_metrics.storage_resolution import StorageResolution
-from os import environ
 from logging import getLogger
 
 logger = getLogger(__name__)
 
-def metrics_enabled():
-    return environ.get("AWS_CLOUDWATCH_CUSTOM_METRICS_ENABLED") == "true"
-
+# This is using the aws_embedded_metrics library, which doesn't seem to be playing nicely with fastapi
+# metrics.put_metric always seems to thrown an exception, even though the metrics are being sent to cloudwatch
+# This is a related issue: https://github.com/awslabs/aws-embedded-metrics-python/issues/52
+# More time needs to be spent on this, but for now, the metrics are being sent to cloudwatch
 @metric_scope
-def put_metric(metric_name, value, unit, metrics):
-    try:
-        logger.info(f"put metric: {metric_name} - {value} - {unit}")
-        metrics.put_metric(metric_name, value, unit, StorageResolution.STANDARD)
-    except Exception as e:
-        # Might be noise in logs, as per:
-        # https://github.com/awslabs/aws-embedded-metrics-python/issues/52
-        logger.error(f"Error putting metric: {e}", exc_info=True)
+def __put_metric(metric_name, value, unit, metrics):
+    logger.debug(f"put metric: {metric_name} - {value} - {unit}")
+    metrics.put_metric(metric_name, value, unit, StorageResolution.STANDARD)
 
-
+# Use this counter function in the app, not the decorated function __put_metric.
+# This wraps __put_metric and handles the exceptions, allows the app to continue running
 def counter(metric_name, value):
-    if metrics_enabled():
-        put_metric(metric_name, value, "Count")
-
+    try:
+        __put_metric(metric_name, value, "Count")
+    except Exception as e:
+        logger.error(f"Error calling put_metric: {e}")
