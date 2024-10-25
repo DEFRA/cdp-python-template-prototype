@@ -6,8 +6,7 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 def metrics_enabled():
-    value = environ.get("AWS_EMF_ENVIRONMENT_OVERRIDE")
-    return value != "local"
+    return environ.get("AWS_CLOUDWATCH_CUSTOM_METRICS_ENABLED") == "true"
 
 @metric_scope
 def put_metric(metric_name, value, unit, metrics):
