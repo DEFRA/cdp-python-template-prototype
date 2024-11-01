@@ -1,9 +1,9 @@
-from os import environ
 from logging import getLogger
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from metrics import counter
 from aws_embedded_metrics.config import get_config
+from app.health.router import router as health_router
+from app.example.router import router as example_router
 
 Confg = get_config()
 logger = getLogger(__name__)
@@ -17,17 +17,5 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.get("/")
-async def root():
-    region = environ.get("AWS_REGION")
-
-    logger.info(f"Region: {region}")
-
-    counter("Root", 1)
-
-    return {"region": region}
-
-# Do not remove - used for health checks
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
+app.include_router(health_router)
+app.include_router(example_router)

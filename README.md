@@ -6,8 +6,8 @@ This is work-in-progress. See [To Do List](./TODO.md)
 
 - [cdp-python-template-prototype](#cdp-python-template-prototype)
   - [Requirements](#requirements)
+    - [Python](#python)
     - [Docker](#docker)
-    - [Python Dependencies](#python-dependencies)
   - [Local development](#local-development)
     - [Setup](#setup)
     - [Development](#development)
@@ -23,37 +23,55 @@ This is work-in-progress. See [To Do List](./TODO.md)
 
 ## Requirements
 
-### Docker
+### Python
 
-This repository uses Docker throughout its lifecycle i.e. both for local development and the environments
+Please install python `>= 3.12` and [configure your python virtual environment](https://fastapi.tiangolo.com/virtual-environments/#create-a-virtual-environment):
 
-This means that local installation of python and configuration of a python virtual environment is not required. Also environment variables are managed consistently throughout the lifecycle
+```python
+# create the virtual environment
+python -m venv .venv
 
-See the `Dockerfile` and `compose.yml` for details
+# activate the the virtual environment in the command line
+source .venv/bin/activate
 
-### Python Dependencies
+# update pip
+python -m pip install --upgrade pip 
+
+# install the dependencies
+pip install -r requirements-dev.txt
+```
 
 This opinionated template uses the [`Fast API`](https://fastapi.tiangolo.com/) Python API framework.
 
-This and all other python libraries must reside in `requirements.txt`
+This and all other runtime python libraries must reside in `requirements.txt`
+
+Other non-runtime dependencies used for dev & test must reside in `requirements-dev.txt`
+
+### Docker
+
+This repository uses Docker throughput its lifecycle i.e. both for local development and the environments. A benefit of this is that environment variables & secrets are managed consistently throughout the lifecycle
+
+See the `Dockerfile` and `compose.yml` for details
 
 ## Local development
 
-Local development is done using Docker compose.  This template contains a local environment with:
-
-- Localstack
-- MongoDB
-- This service
-
 ### Setup
 
-Environment variables: `compose/aws.env``
+Libraries: Ensure the python virtual environment is configured and libraries are installed using `requirements-dev.txt`, [as above](#python)
+
+Environment variables: `compose/aws.env`
 
 Secrets: `compose/secrets.env`. You need to create this, as it's excluded from version control.
 
 ### Development
 
-To run the application in `development` mode run:
+The app can be run locally using Docker compose.  This template contains a local environment with:
+
+- Localstack
+- MongoDB
+- This service
+  
+To run the application in development mode:
 
 ```bash
 docker compose watch
@@ -61,15 +79,19 @@ docker compose watch
 
 ### Testing
 
+Ensure the python virtual environment is configured and libraries are installed using `requirements-dev.txt`, [as above](#python)
+
+Testing follows the [FastApi documented approach](https://fastapi.tiangolo.com/tutorial/testing/); using pytest & starlette.
+
 To test the application run:
 
 ```bash
-TBC
+pytest
 ```
 
 ### Production
 
-To mimic the application running in `production` mode locally run:
+To mimic the application running in `production mode locally run:
 
 ```bash
 docker compose up --build -d
@@ -86,7 +108,7 @@ docker compose down
 | Endpoint             | Description                    |
 | :------------------- | :----------------------------- |
 | `GET: /docs`         | Automatic API Swagger docs     |
-| `GET: /`             | Simple example                 |
+| `GET: /example`      | Simple example                 |
 
 ## Custom Cloudwatch Metrics
 
